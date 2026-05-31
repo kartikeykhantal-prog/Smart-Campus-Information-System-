@@ -1,0 +1,442 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- TAB 1: DASHBOARD -->
+<section id="tab-dashboard" class="tab-content active">
+    <!-- Stat Cards Grid -->
+    <div class="stats-grid">
+        <div class="stat-card float-anim-1">
+            <div class="stat-icon cyan-glow"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Total Students</span>
+                <h3 id="stat-total-students">0</h3>
+            </div>
+        </div>
+        <div class="stat-card float-anim-2">
+            <div class="stat-icon purple-glow"><i class="fa-solid fa-calculator"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Mean Score</span>
+                <h3 id="stat-mean-score">0.0%</h3>
+            </div>
+        </div>
+        <div class="stat-card float-anim-3">
+            <div class="stat-icon violet-glow"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Median Score</span>
+                <h3 id="stat-median-score">0.0%</h3>
+            </div>
+        </div>
+        <div class="stat-card float-anim-4">
+            <div class="stat-icon blue-glow"><i class="fa-solid fa-award"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Highest Score</span>
+                <h3 id="stat-max-score">0.0%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Visual Panel -->
+    <div class="dashboard-charts-grid">
+        <!-- Matplotlib Chart Card -->
+        <div class="dashboard-card chart-card float-anim-2">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-chart-bar header-icon"></i>Performance Analytics (Matplotlib)</h3>
+                <span class="badge">Backend Rendered</span>
+            </div>
+            <div class="card-body plot-container">
+                <div id="no-plot-message" class="empty-state hidden">
+                    <i class="fa-solid fa-chart-area"></i>
+                    <p>No student data available to generate plots.</p>
+                </div>
+                <img id="analytics-plot" src="" alt="Performance Analytics" class="analytics-img">
+            </div>
+        </div>
+
+        <!-- Top Performers Card -->
+        <div class="dashboard-card float-anim-3">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-star header-icon text-yellow"></i>Top Performers</h3>
+            </div>
+            <div class="card-body">
+                <div id="top-performers-list" class="top-performers-container">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 2: STUDENTS -->
+<section id="tab-students" class="tab-content">
+    <div class="dual-grid">
+        <!-- Registration Form Card -->
+        <div class="dashboard-card float-anim-1">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-user-plus header-icon"></i>Student Registration</h3>
+            </div>
+            <div class="card-body">
+                <form id="student-reg-form" class="responsive-form">
+                    <div class="form-group">
+                        <label for="reg-id">Student ID</label>
+                        <input type="text" id="reg-id" placeholder="e.g. STU1006" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" placeholder="e.g. John Doe" required>
+                    </div>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="reg-age">Age</label>
+                            <input type="number" id="reg-age" min="1" max="120" placeholder="18" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-score">Marks / Score (%)</label>
+                            <input type="number" id="reg-score" min="0" max="100" step="0.1" placeholder="85.5" required>
+                        </div>
+                    </div>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="reg-tuition">Tuition Fee (₹)</label>
+                            <input type="number" id="reg-tuition" min="0" value="8000">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-hostel">Hostel Fee (₹)</label>
+                            <input type="number" id="reg-hostel" min="0" value="1500">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-transport">Transport Fee (₹)</label>
+                            <input type="number" id="reg-transport" min="0" value="500">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn"><i class="fa-solid fa-paper-plane"></i> Register Student</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search & Sorting Card -->
+        <div class="dashboard-card float-anim-3">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-magnifying-glass-chart header-icon"></i>Search & Sort System</h3>
+            </div>
+            <div class="card-body">
+                <div class="search-sort-controls">
+                    <!-- Search Form -->
+                    <div class="form-group">
+                        <label>Search Student ID</label>
+                        <div class="search-input-group">
+                            <input type="text" id="search-id" placeholder="e.g. STU1001">
+                            <select id="search-method" class="select-dropdown">
+                                <option value="linear">Linear Search</option>
+                                <option value="binary">Binary Search</option>
+                            </select>
+                            <button id="search-btn" class="action-btn"><i class="fa-solid fa-search"></i> Search</button>
+                        </div>
+                    </div>
+
+                    <!-- Sorting Controls -->
+                    <div class="form-group mt-3">
+                        <label>Sort Records</label>
+                        <div class="sort-buttons-row">
+                            <button id="sort-asc-btn" class="sort-btn"><i class="fa-solid fa-arrow-down-a-z"></i> ID (Ascending)</button>
+                            <button id="sort-desc-btn" class="sort-btn"><i class="fa-solid fa-arrow-up-z-a"></i> ID (Descending)</button>
+                            <button id="sort-score-btn" class="sort-btn"><i class="fa-solid fa-sort-numeric-down"></i> Score (High-Low)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Execution Tracer -->
+                <div class="visual-tracer-container">
+                    <span class="tracer-title"><i class="fa-solid fa-terminal"></i> Algorithm Steps Tracer</span>
+                    <div id="search-trace-log" class="trace-log">
+                        <div class="trace-placeholder">Perform a search to trace algorithm steps in real-time...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Records Table Card -->
+    <div class="dashboard-card mt-4 float-anim-2">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-table-list header-icon"></i>Registered Student Records</h3>
+            <button id="refresh-students-btn" class="icon-action-btn"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div class="card-body overflow-x">
+            <table class="data-table" id="student-records-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Score</th>
+                        <th>Grade</th>
+                        <th>Remark</th>
+                        <th>Total Fee</th>
+                        <th>Courses</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="students-table-body">
+                    <!-- Dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 3: COURSES -->
+<section id="tab-courses" class="tab-content">
+    <div class="dual-grid">
+        <!-- Add Course Card -->
+        <div class="dashboard-card float-anim-1">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-book-medical header-icon"></i>Course Directory Management</h3>
+            </div>
+            <div class="card-body">
+                <form id="course-add-form" class="responsive-form">
+                    <div class="form-group">
+                        <label for="course-code">Course Code</label>
+                        <input type="text" id="course-code" placeholder="e.g. CS302" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-name">Course Name</label>
+                        <input type="text" id="course-name" placeholder="e.g. Database Systems" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-credits">Credits</label>
+                        <input type="number" id="course-credits" min="1" max="6" placeholder="4" required>
+                    </div>
+                    <button type="submit" class="submit-btn"><i class="fa-solid fa-plus"></i> Add Course</button>
+                </form>
+
+                <h4 class="mt-4 mb-2"><i class="fa-solid fa-book"></i> Available Courses</h4>
+                <div class="list-container">
+                    <table class="data-table miniature">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Credits</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courses-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Course Enrollment Card -->
+        <div class="dashboard-card float-anim-3">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-circle-check header-icon"></i>Course Enrollment Management</h3>
+            </div>
+            <div class="card-body">
+                <form id="enrollment-form" class="responsive-form">
+                    <div class="form-group">
+                        <label for="enroll-student-select">Select Student</label>
+                        <select id="enroll-student-select" class="select-dropdown" required>
+                            <!-- Dynamically loaded -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enroll-course-select">Select Course to Add</label>
+                        <select id="enroll-course-select" class="select-dropdown" required>
+                            <!-- Dynamically loaded -->
+                        </select>
+                    </div>
+                    <div class="enrollment-limits-alert">
+                        <span class="alert-title"><i class="fa-solid fa-circle-info"></i> Enrollment Bounds:</span>
+                        <ul>
+                            <li>Maximum of <strong>5 courses</strong> per student.</li>
+                            <li>Maximum of <strong>18 total credits</strong> per student.</li>
+                        </ul>
+                    </div>
+                    <button type="submit" class="submit-btn select-glow"><i class="fa-solid fa-file-signature"></i> Enroll Student</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 4: FEES -->
+<section id="tab-fees" class="tab-content">
+    <div class="dual-grid">
+        <!-- Student Fee Updater -->
+        <div class="dashboard-card float-anim-2">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-dollar-sign header-icon"></i>Update Student Fees</h3>
+            </div>
+            <div class="card-body">
+                <form id="fee-update-form" class="responsive-form">
+                    <div class="form-group">
+                        <label for="fee-student-select">Select Student</label>
+                        <select id="fee-student-select" class="select-dropdown" required>
+                            <!-- Dynamically loaded -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fee-tuition">Tuition Fee (₹)</label>
+                        <input type="number" id="fee-tuition" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fee-hostel">Hostel Fee (₹)</label>
+                        <input type="number" id="fee-hostel" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fee-transport">Transport Fee (₹)</label>
+                        <input type="number" id="fee-transport" min="0" required>
+                    </div>
+                    
+                    <div class="fee-preview-box">
+                        <span class="preview-label">Total Fee:</span>
+                        <span id="fee-total-preview" class="preview-value">₹0.00</span>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn"><i class="fa-solid fa-save"></i> Save Fees</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Standalone Fee Calculator (Playground) -->
+        <div class="dashboard-card float-anim-4">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-calculator header-icon"></i>Fee Calculator Sandbox</h3>
+            </div>
+            <div class="card-body">
+                <p class="description">Test fee calculations using modular reusable Python API endpoints without updating records.</p>
+                
+                <div class="responsive-form mt-3">
+                    <div class="form-group">
+                        <label for="calc-tuition">Tuition (₹)</label>
+                        <input type="number" id="calc-tuition" value="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="calc-hostel">Hostel (₹)</label>
+                        <input type="number" id="calc-hostel" value="1200">
+                    </div>
+                    <div class="form-group">
+                        <label for="calc-transport">Transport (₹)</label>
+                        <input type="number" id="calc-transport" value="300">
+                    </div>
+                    
+                    <div class="calc-results-box">
+                        <div class="result-row">
+                            <span>Base Tuition:</span>
+                            <span id="calc-res-tuition">₹5000.00</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Hostel Allocation:</span>
+                            <span id="calc-res-hostel">₹1200.00</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Transport Allocation:</span>
+                            <span id="calc-res-transport">₹300.00</span>
+                        </div>
+                        <div class="result-divider"></div>
+                        <div class="result-row total">
+                            <span>Grand Total:</span>
+                            <span id="calc-res-total" class="cyan-text">₹6500.00</span>
+                        </div>
+                    </div>
+                    <button id="playground-calc-btn" class="submit-btn violet-glow"><i class="fa-solid fa-equals"></i> Calculate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 5: SCANNER -->
+<section id="tab-scanner" class="tab-content">
+    <div class="dual-grid">
+        <!-- Directory Scanner Form -->
+        <div class="dashboard-card float-anim-1">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-folder-open header-icon"></i>Host Directory Scanner</h3>
+            </div>
+            <div class="card-body">
+                <p class="description">Scan directory paths on the server. If empty, the scanning module defaults to the workspace root.</p>
+                <div class="responsive-form mt-3">
+                    <div class="form-group">
+                        <label for="scan-path-input">Directory Path</label>
+                        <div class="input-with-hint">
+                            <input type="text" id="scan-path-input" placeholder="e.g. C:\Users\Public">
+                            <span class="input-hint">Leave blank to scan the application folder structure.</span>
+                        </div>
+                    </div>
+                    <button id="scan-btn" class="submit-btn"><i class="fa-solid fa-folder-tree"></i> Scan Directory</button>
+                </div>
+
+                <div class="exception-handler-panel mt-4">
+                    <span class="exception-title"><i class="fa-solid fa-triangle-exclamation"></i> Exception Log Output</span>
+                    <div id="scanner-exception-box" class="exception-box empty">
+                        No exceptions encountered. System running normally.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directory Structure Viewer -->
+        <div class="dashboard-card float-anim-3">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-sitemap header-icon"></i>Directory Structure Map</h3>
+            </div>
+            <div class="card-body">
+                <div class="scanned-path-banner">
+                    <span>Scanned Path:</span>
+                    <strong id="scanned-path-text">-</strong>
+                </div>
+                
+                <div id="directory-tree-viewer" class="tree-viewer-container">
+                    <div class="tree-placeholder">
+                        <i class="fa-solid fa-folder-closed"></i>
+                        <p>Trigger folder scan to display structural hierarchy here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 6: FILE MANAGER -->
+<section id="tab-file-mgmt" class="tab-content">
+    <div class="dual-grid">
+        <!-- Local DB Export -->
+        <div class="dashboard-card float-anim-2">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-file-export header-icon"></i>Export Records</h3>
+            </div>
+            <div class="card-body">
+                <p class="description">Download the complete database of student records, course mappings, and grading schemas as a single structured JSON backup.</p>
+                <div class="action-box-container mt-4">
+                    <a href="/api/file/export" download="student_campus_backup.json" class="download-card-btn">
+                        <i class="fa-solid fa-file-arrow-down download-icon"></i>
+                        <span>Download JSON Backup</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Local DB Import -->
+        <div class="dashboard-card float-anim-4">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-file-import header-icon"></i>Import / Restore Records</h3>
+            </div>
+            <div class="card-body">
+                <p class="description">Select a previous structured JSON backup to restore all student data, grades, fees, and course registrations. This will overwrite current records.</p>
+                <form id="db-restore-form" class="responsive-form mt-4">
+                    <div class="form-group">
+                        <label for="restore-file-input">Select JSON Backup File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="restore-file-input" accept=".json" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn select-glow"><i class="fa-solid fa-file-arrow-up"></i> Upload and Restore Database</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
