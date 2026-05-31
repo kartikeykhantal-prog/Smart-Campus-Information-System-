@@ -63,13 +63,13 @@ pip install -r requirements.txt
 ### 2. Run the Unit Tests
 To verify all calculations, grading logic, sorting, and search algorithms:
 ```bash
-python test_app.py
+python3 test_app.py
 ```
 
 ### 3. Start the Flask Server
 Launch the application:
 ```bash
-python app.py
+python3 app.py
 ```
 
 The server will initialize the local database schema with seed values and start listening on:
